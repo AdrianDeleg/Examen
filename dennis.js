@@ -1,36 +1,59 @@
 /*
 	Calculadora simple
-	- Funciones: add(a,b), subtract(a,b), multiply(a,b)
-	- Validación básica de parámetros (deben ser números válidos)
+	- Funciones: add(a,b), subtract(a,b), multiply(a,b), divide(a,b)
+	- Validación básica de parámetros (acepta numbers o strings numéricos)
 */
 
-function _validateNumber(value, name) {
-	if (typeof value !== 'number' || Number.isNaN(value)) {
+/**
+ * Convierte un valor a Number y valida que no sea NaN.
+ * @param {number|string} value
+ * @param {string} name nombre del parámetro para mensajes de error
+ * @returns {number}
+ */
+function _toNumber(value, name) {
+	const n = Number(value);
+	if (Number.isNaN(n)) {
 		throw new TypeError(`${name} debe ser un número válido`);
 	}
+	return n;
 }
 
+/**
+ * Suma dos valores numéricos.
+ */
 function add(a, b) {
-	_validateNumber(a, 'a');
-	_validateNumber(b, 'b');
-	return a + b;
+	return _toNumber(a, 'a') + _toNumber(b, 'b');
 }
 
+/**
+ * Resta dos valores numéricos (a - b).
+ */
 function subtract(a, b) {
-	_validateNumber(a, 'a');
-	_validateNumber(b, 'b');
-	return a - b;
+	return _toNumber(a, 'a') - _toNumber(b, 'b');
 }
 
+/**
+ * Multiplica dos valores numéricos.
+ */
 function multiply(a, b) {
-	_validateNumber(a, 'a');
-	_validateNumber(b, 'b');
-	return a * b;
+	return _toNumber(a, 'a') * _toNumber(b, 'b');
+}
+
+/**
+ * Divide dos valores numéricos (a / b). Lanza RangeError si b es 0.
+ */
+function divide(a, b) {
+	const x = _toNumber(a, 'a');
+	const y = _toNumber(b, 'b');
+	if (y === 0) {
+		throw new RangeError('divide: división por cero');
+	}
+	return x / y;
 }
 
 // Exportar para uso desde otros módulos (Node.js)
 if (typeof module !== 'undefined' && module.exports) {
-	module.exports = { add, subtract, multiply };
+	module.exports = { add, subtract, multiply, divide };
 }
 
 // Si se ejecuta directamente, correr pruebas cortas
@@ -39,56 +62,18 @@ if (typeof require !== 'undefined' && require.main === module) {
 	console.log('add(2, 3) =>', add(2, 3));
 	console.log('subtract(5, 2) =>', subtract(5, 2));
 	console.log('multiply(4, 3) =>', multiply(4, 3));
+	console.log('divide(10, 2) =>', divide(10, 2));
 
-	// Ejemplo de manejo de error
+	// Casos de error esperados
 	try {
-		// eslint-disable-next-line no-throw-literal
+		divide(1, 0);
+	} catch (err) {
+		console.log('Error esperado divide(1,0):', err.message);
+	}
+
+	try {
 		add('x', 1);
 	} catch (err) {
-		console.log('Error esperado al pasar un argumento inválido:', err.message);
+		console.log('Error esperado add("x",1):', err.message);
 	}
-}
-
-
-/**
- * Suma dos valores numéricos.
- * Convierte los argumentos a Number y arroja TypeError si no son números válidos.
- * @param {number|string} a
- * @param {number|string} b
- * @returns {number}
- */
-function add(a, b) {
-	const x = Number(a);
-	const y = Number(b);
-	if (Number.isNaN(x) || Number.isNaN(y)) {
-		throw new TypeError('add: ambos argumentos deben ser números');
-	}
-	return x + y;
-}
-
-/**
- * Resta dos valores numéricos (a - b).
- * Convierte los argumentos a Number y arroja TypeError si no son números válidos.
- * @param {number|string} a
- * @param {number|string} b
- * @returns {number}
- */
-function subtract(a, b) {
-	const x = Number(a);
-	const y = Number(b);
-	if (Number.isNaN(x) || Number.isNaN(y)) {
-		throw new TypeError('subtract: ambos argumentos deben ser números');
-	}
-	return x - y;
-}
-
-// Exportar para uso en otros módulos (Node.js)
-if (typeof module !== 'undefined' && module.exports) {
-	module.exports = { add, subtract };
-}
-
-// Pruebas rápidas al ejecutar directamente el archivo
-if (require && require.main === module) {
-	console.log('Prueba add(2, 3) =>', add(2, 3));
-	console.log('Prueba subtract(5, 2) =>', subtract(5, 2));
 }
