@@ -33,7 +33,8 @@ function areaRectangulo(largo, ancho) {
   return largo * ancho;
 }
 
-// Método para verificar si es par - NUEVO
-function esPar(numero) {
-  return numero % 2 === 0;
+// Método para calcular el factorial - NUEVO
+function factorial(n) {
+  if (n === 0 || n === 1) return 1;
+  return n * factorial(n - 1);
 }
